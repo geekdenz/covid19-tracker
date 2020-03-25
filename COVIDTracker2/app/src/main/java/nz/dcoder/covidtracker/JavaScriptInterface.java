@@ -47,6 +47,7 @@ public class JavaScriptInterface {
     public void stopTracking() {
         gpsService.stopTracking();
     }
+
     public BackgroundService gpsService;
     public boolean mTracking = false;
     private ServiceConnection serviceConnection = new ServiceConnection() {
