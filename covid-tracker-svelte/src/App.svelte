@@ -1,18 +1,27 @@
 <script>
-	export let name
-	// window.android.showToast('Svelte')
+	let tracking = false
 	function clickStart(ev) {
-		// window.android.showToast('Start tracking')
-		alert('before start')
 		window.android.startTracking()
-		alert('start tracking')
+		window.android.showToast('Starting tracking...')
+		tracking = true
+	}
+	function clickStop(ev) {
+		window.android.stopTracking()
+		window.android.showToast('Stopping tracking...')
+		tracking = false
 	}
 </script>
 
 <main>
 	<h1>Covid-19 Tracker</h1>
-	<p>Update 2</p>
-	<button on:click={clickStart}>Start Tracking</button>
+	<p>Update 4</p>
+	{#if tracking }
+	<p>TRACKING</p>
+	{:else}
+	<p>NOT TRACKING</p>
+	{/if}
+	<button on:click={clickStart}>START Tracking</button>
+	<button on:click={clickStop}>STOP Tracking</button>
 </main>
 
 <style>

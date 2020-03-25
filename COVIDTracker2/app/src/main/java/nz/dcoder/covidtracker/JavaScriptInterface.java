@@ -39,9 +39,13 @@ public class JavaScriptInterface {
                 },
                 PERMISSION_REQUEST_CODE
         );
-        Toast.makeText(mContext, "Before", Toast.LENGTH_LONG).show();
+//        Toast.makeText(mContext, "Before", Toast.LENGTH_LONG).show();
         gpsService.startTracking();
-        Toast.makeText(mContext, "After", Toast.LENGTH_LONG).show();
+//        Toast.makeText(mContext, "After", Toast.LENGTH_LONG).show();
+    }
+    @JavascriptInterface
+    public void stopTracking() {
+        gpsService.stopTracking();
     }
     public BackgroundService gpsService;
     public boolean mTracking = false;

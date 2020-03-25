@@ -18,6 +18,6 @@ public class MainActivity extends AppCompatActivity {
         wSettings.setJavaScriptEnabled(true);
 //        myWebView.addJavascriptInterface(new JavaScriptInterface(getApplicationContext()), "android");
         myWebView.addJavascriptInterface(new JavaScriptInterface(this), "android");
-        myWebView.loadUrl("http://192.168.122.1:5000");
+        myWebView.loadUrl("http://192.168.122.1:5000/?cache=4");
     }
 }
