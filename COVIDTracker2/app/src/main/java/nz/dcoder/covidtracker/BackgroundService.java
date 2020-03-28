@@ -20,6 +20,8 @@ import androidx.annotation.RequiresApi;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Deque;
+import java.util.LinkedList;
 
 public class BackgroundService extends Service {
     private final LocationServiceBinder binder = new LocationServiceBinder();
@@ -27,9 +29,11 @@ public class BackgroundService extends Service {
     private LocationListener mLocationListener;
     private LocationManager mLocationManager;
     private NotificationManager notificationManager;
+    private static Deque<Location> locationQueue = new LinkedList<>();
 
     private final int LOCATION_INTERVAL = 2000;
     private final int LOCATION_DISTANCE = 10;
+    public DbHandler dbHandler;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -49,24 +53,31 @@ public class BackgroundService extends Service {
         }
 
         public OutputStreamWriter outputStreamWriter;
-        private void writeToFile(String data) {
-            try {
-                if (!loggingLocations) return;
-                outputStreamWriter.write(data);
-                Log.i(TAG, "writing to file: " + data);
-            }
-            catch (IOException e) {
-                Log.e("Exception", "File write failed: " + e.toString());
-            }
-        }
+//        private void writeToFile(String data) {
+//            try {
+//                if (!loggingLocations) return;
+//                outputStreamWriter.write(data);
+//                Log.i(TAG, "writing to file: " + data);
+//            }
+//            catch (IOException e) {
+//                Log.e("Exception", "File write failed: " + e.toString());
+//            }
+//        }
 
         @Override
-        public void onLocationChanged(Location location)
+        public synchronized void onLocationChanged(Location location)
         {
             mLastLocation = location;
 
             Log.i(TAG, "LocationChanged: "+location);
-            writeToFile(location.toString());
+            locationQueue.add(location);
+            checkSizeAndStoreLocations();
+        }
+        public synchronized void checkSizeAndStoreLocations() {
+            if (locationQueue.size() >= 10) {
+                dbHandler.addLocations(locationQueue);
+                locationQueue = new LinkedList<>();
+            }
         }
 
         @Override
@@ -101,6 +112,7 @@ public class BackgroundService extends Service {
     {
         Log.i(TAG, "onCreate");
         startForeground(12345678, getNotification());
+        dbHandler = new DbHandler(getApplicationContext());
     }
 
     @Override
@@ -114,6 +126,7 @@ public class BackgroundService extends Service {
                 Log.i(TAG, "fail to remove location listners, ignore", ex);
             }
         }
+        dbHandler.closeDb();
     }
 
     private void initializeLocationManager() {
