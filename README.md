@@ -11,3 +11,5 @@ npm start
 ```
 
 Run Android app in COVIDTracker2/.
+
+![Covid19-Tracker App](images/Covid19Tracker.png)
